@@ -18,7 +18,7 @@ public class MainRPG implements Runnable{
 	public static int area = 1;
 	public static int lastArea = 0;
 	
-	// The states of towns and areas can change according to variable
+	// The states of towns, areas, and quests can change according to variable
 	public static int shadyManState = 0;
 	public static int forestState = 0;
 	public static int cityState = 0;
@@ -32,13 +32,15 @@ public class MainRPG implements Runnable{
 	public static int guildMission = 0;
 	public static int gameBeat = 0;
 	
-	 // Default player information
-	static int maxHealth = 25;
-	static int health = 25;
-	static int mana = 25;
+	// Default player information
+	static String name;
+	static int maxHealth = 20;
+	static int health = 20;
+	static int mana = 20;
 	static int attackDmg = 10;
-	static int healthPotHeal = 20;
-	static int superHealthPotHeal = 40;
+	static int defense = 0;
+	static int healthPotHeal = 15;
+	static int superHealthPotHeal = 30;
 	static int manaPotRestore = 10;
 	static int enemiesDefeated = 0;
 	static int bossDefeated = 0;
@@ -48,23 +50,22 @@ public class MainRPG implements Runnable{
 	static int[] levelArray = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
 	static int gold = 0;
 	static int silver = 0;
-	static int copper = 0;
+	static int copper = 50;
 	static int drunk = 0;
 	static int warriorToken = 0;
 	static String currentSwordEquip = "nothing";
 	static String currentShieldEquip = "nothing";
 	
-	// Spells need balancing
+	// Spells
 	static int spellState = 0;
 	static int fireBallDamage = 5;
-	static int magicMissileDamage = 10;
 	static int fireBallMana = 10;
+	static int magicMissileDamage = 10;
 	static int magicMissileMana = 15;
-	static int absorbDamage = 10;
+	static int absorbDamage = 10; // Also restores 10Hp
 	static int absorbMana = 25;
 	
 	// Inventory items - Potions, Food, Equipment, Items
-	static String name;
 	static int healthPots = 0;
 	static int superHealthPots = 0;
 	static int manaPots = 0;
@@ -73,24 +74,25 @@ public class MainRPG implements Runnable{
 	static int beer = 0;
 	static int bread = 0;
 	static int pumpkin = 0;
-	static int scythe = 0;
-	static int bronzeSword = 0;
-	static int bronzeShield = 0;
-	static int ironSword = 0;
-	static int ironShield = 0;
-	static int steelSword = 0;
-	static int steelShield = 0;
-	static int mithrilSword = 0;
-	static int mithrilShield = 0;
-	static int guildSword = 0;
-	static int guildShield = 0;
-	static int adamantSword = 0;
-	static int adamantShield = 0;
-	static int dragonSword = 0;
-	static int dragonShield = 0;
-	static int lantern = 0;
-	static int flintLock = 0;
 	
+	static int scythe = 0; // 5 AD
+	static int bronzeSword = 0; // 5 AD
+	static int bronzeShield = 0; // 5 Max Hp and Defense
+	static int ironSword = 0; // 10
+	static int ironShield = 0; // 10
+	static int steelSword = 0; // 20
+	static int steelShield = 0; // 15
+	static int mithrilSword = 0; // 25
+	static int mithrilShield = 0; // 20
+	static int guildSword = 0; // 30
+	static int guildShield = 0; // 25
+	static int adamantSword = 0; // 35
+	static int adamantShield = 0; // 30
+	static int dragonSword = 0; // 50
+	static int dragonShield = 0; // 50 and 40
+	static int flintLock = 0; // 100
+	
+	static int lantern = 0;
 	
 	// Drops in percents
 	static int healthPotDrop = 30;
@@ -98,8 +100,8 @@ public class MainRPG implements Runnable{
 	static int manaPotDrop = 25;
 	static int bSwordDrop = 10;
 	static int bShieldDrop = 10;
-	static int iSwordDrop = 10;
-	static int iShieldDrop = 10;
+	static int iSwordDrop = 5;
+	static int iShieldDrop = 5;
 	static int sSwordDrop = 5;
 	static int sShieldDrop = 5;
 	static int mSwordDrop = 5;
@@ -112,25 +114,29 @@ public class MainRPG implements Runnable{
 	
 	public static void main(String args[]) {
 		
-		ThreadPool pool = new ThreadPool(2);
+		ThreadPool pool = new ThreadPool(3);
 		MusicPlayer player = new MusicPlayer("Opening", "Town", "Sanctuary", "The Empire");
+		GUI gui = new GUI();
+		pool.runTask(gui);
 		pool.runTask(player);
 		
 		running = true;
 		
-		System.out.println("\tEnter your name!");
+		System.out.println("\tEnter your name!"
+				+ "\n");
 		
 		name = in.nextLine();
 		
 		System.out.println("\tYour name is: " + name
 				+ "\n");
-		System.out.println("Press any key to continue!");
+		System.out.println("Press any key to continue!"
+				+ "\n");
 		
 		in.nextLine();
 		
-		System.out.println("You awake in a field, wheat crop rising all around you."
+		System.out.println("You awake in a field, wheat rising all around you."
 				+ "\nThe only thing you see is a small town looming ahead."
-				+ "\nYou walk to the town, curious as to where you are. "
+				+ "\nYou walk to the town, curious as to where you are."
 				+ "\n");
 		
 		while(running) {
@@ -177,9 +183,7 @@ public class MainRPG implements Runnable{
 			
 			System.out.println("");
 			System.out.println(name + " has defeated " + enemiesDefeated + " monsters!");
-		//	System.out.println(name + " has defeated " + bossDefeated + " boss monsters!");
-		//	System.out.println(name + " has defeated " + hardBossDefeated + " hard boss monsters!");
-			System.out.println(name + " is level " + level + " and has " + experience + " XP!");
+			System.out.println(name + " was level " + level + " and had " + experience + " XP!");
 			System.out.println("");
 			System.out.println("##########################");
 			System.out.println("# Thank you for playing! #");
@@ -188,7 +192,6 @@ public class MainRPG implements Runnable{
 			System.out.println("Created by: Dane Stark");
 			
 			running = false;
-			
 		}
 		
 	}
@@ -198,16 +201,9 @@ public class MainRPG implements Runnable{
 		
 		area = 1;
 		
-		String guard;
-		int guardHP = 200;
-		int guardAD = 50;
-		int guardDEF = 50;
-		int guardEXP = 200;
-		int guardMoney = 1;
 		String[] shadyMan = {"Shady Man"};
 		int shadyManHP = 500;
-		int shadyManAD = 200;
-		int shadyManDEF = 200;
+		int shadyManAD = 150;
 		int shadyManEXP = 500;
 		int shadyManMoney = 10;
 			
@@ -473,7 +469,7 @@ public class MainRPG implements Runnable{
 										if(input.equals("1")) {
 										
 											beer -= 5;
-											drunk += 5;
+											drunk = 5;
 											health -=5;
 											attackDmg -= 5;
 											System.out.println("You raise mug after mug with the Shady Man."
@@ -513,7 +509,7 @@ public class MainRPG implements Runnable{
 									
 									while(mobFightHealth > 0) {
 										
-										System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+										System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 										System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 										System.out.println("\n\tWhat would you like to do?");
 										System.out.println("\t1. Attack");
@@ -526,10 +522,20 @@ public class MainRPG implements Runnable{
 										if(action.equals("1") && mobFightHealth >= 2) {
 											
 											int damageDealt = rand.nextInt(attackDmg);
-											int damageTaken = rand.nextInt(shadyManAD);
+											int damageTaken = rand.nextInt(shadyManAD) - defense;
 											
 											mobFightHealth -= damageDealt;
+											
+											if(damageTaken > 0) {
+												
 											health -= damageTaken;
+											}
+											
+											else if(damageTaken <= 0) {
+												
+												damageTaken = 1;
+												health -= damageTaken;
+											}
 											
 											System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 											System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -871,11 +877,11 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("What would you like to buy?"
 							+ "\n");
-					System.out.println("1: Bread\t\t10 copper");
-					System.out.println("2: Apple\t\t5 copper");
+					System.out.println("1: Bread\t\t15 copper");
+					System.out.println("2: Apple\t\t10 copper");
 					System.out.println("3: Bronze Sword\t\t50 copper");
 					System.out.println("4: Bronze Shield\t50 copper");
-					System.out.println("5: Lantern\t\t25 copper");
+					System.out.println("5: Lantern\t\t30 copper");
 					System.out.println("6: Sell");
 					System.out.println("7: Leave the store");
 					
@@ -883,22 +889,22 @@ public class MainRPG implements Runnable{
 					
 					if(input.equals("1")) {
 						
-						System.out.println("Buy bread for 10 copper Carlons?"
+						System.out.println("Buy bread for 15 copper Carlons?"
 								+ "\n");
 						System.out.println("1: Buy");
 						System.out.println("2: Nevermind");
 						
 						input = in.nextLine();
 						
-						if(input.equals("1") && copper >= 10) {
+						if(input.equals("1") && copper >= 15) {
 							
 							bread ++;
-							copper -= 10;
+							copper -= 15;
 							System.out.println("You have bought a loaf of bread."
 									+ "\n");
 						}
 						
-						else if(input.equals("1") && copper < 10) {
+						else if(input.equals("1") && copper < 15) {
 							
 							System.out.println("You do not have enough for this item."
 									+ "\n");
@@ -915,22 +921,22 @@ public class MainRPG implements Runnable{
 					
 					else if(input.equals("2")) {
 						
-						System.out.println("Buy apple for 5 copper Carlons?"
+						System.out.println("Buy apple for 10 copper Carlons?"
 								+ "\n");
 						System.out.println("1: Buy");
 						System.out.println("2: Nevermind");
 						
 						input = in.nextLine();
 						
-						if(input.equals("1") && copper >= 5) {
+						if(input.equals("1") && copper >= 10) {
 							
 							apple ++;
-							copper -= 5;
+							copper -= 10;
 							System.out.println("You have bought an apple."
 									+ "\n");
 						}
 						
-						else if(input.equals("1") && copper < 5) {
+						else if(input.equals("1") && copper < 10) {
 							
 							System.out.println("You do not have enough for this item."
 									+ "\n");
@@ -1008,22 +1014,22 @@ public class MainRPG implements Runnable{
 					
 					else if(input.equals("5")) {
 						
-						System.out.println("Buy lantern for 25 copper Carlons?"
+						System.out.println("Buy lantern for 30 copper Carlons?"
 								+ "\n");
 						System.out.println("1: Buy");
 						System.out.println("2: Nevermind");
 						
 						input = in.nextLine();
 						
-						if(input.equals("1") && copper >= 25) {
+						if(input.equals("1") && copper >= 30) {
 							
 							lantern ++;
-							copper -= 25;
+							copper -= 30;
 							System.out.println("You have bought a lantern."
 									+ "\n");
 						}
 						
-						else if(input.equals("1") && copper < 25) {
+						else if(input.equals("1") && copper < 30) {
 							
 							System.out.println("You do not have enough for this item."
 									+ "\n");
@@ -1219,7 +1225,7 @@ public class MainRPG implements Runnable{
 						System.out.println("The guard peers at you approaching through sleepy eyes."
 								+ "\nHe then yawns and closes then, ignoring you."
 								+ "\n");
-						// Need to finish
+						// Perhaps enhance interaction later
 					}
 					
 					else if(input.equals("3")) {
@@ -1232,8 +1238,8 @@ public class MainRPG implements Runnable{
 									
 							System.out.println("Which item would you like? He eagerly says"
 									+ "\n");
-							System.out.println("1: Apple\t4 copper");
-							System.out.println("2: Bread\t9 copper");
+							System.out.println("1: Apple\t9 copper");
+							System.out.println("2: Bread\t14 copper");
 							System.out.println("3: Pumpkin\t20 copper");
 							System.out.println("4: Scythe\t45 copper");
 							System.out.println("5: Leave");
@@ -1242,22 +1248,22 @@ public class MainRPG implements Runnable{
 								
 							if(input.equals("1")) {
 									
-								System.out.println("Buy apple for 4 copper Carlons?"
+								System.out.println("Buy apple for 9 copper Carlons?"
 										+ "\n");
 								System.out.println("1: Buy");
 								System.out.println("2: Nevermind");
 									
 								input = in.nextLine();
 									
-								if(input.equals("1") && copper >= 4) {
+								if(input.equals("1") && copper >= 9) {
 										
 									apple ++;
-									copper -= 4;
+									copper -= 9;
 									System.out.println("You have bought an apple."
 											+ "\n");
 								}
 									
-								else if(input.equals("1") && copper < 4) {
+								else if(input.equals("1") && copper < 9) {
 										
 									System.out.println("You do not have enough for this item."
 											+ "\n");
@@ -1273,22 +1279,22 @@ public class MainRPG implements Runnable{
 								
 							else if(input.equals("2")) {
 									
-								System.out.println("Buy bread for 9 copper Carlons?"
+								System.out.println("Buy bread for 14 copper Carlons?"
 										+ "\n");
 								System.out.println("1: Buy");
 								System.out.println("2: Nevermind");
 									
 								input = in.nextLine();
 									
-								if(input.equals("1") && copper >= 9) {
+								if(input.equals("1") && copper >= 14) {
 										
 									bread ++;
-									copper -= 9;
+									copper -= 14;
 									System.out.println("You have bought a loaf of bread."
 											+ "\n");
 								}
 									
-								else if(input.equals("1") && copper < 9) {
+								else if(input.equals("1") && copper < 14) {
 										
 									System.out.println("You do not have enough for this item."
 											+ "\n");
@@ -1428,7 +1434,7 @@ public class MainRPG implements Runnable{
 		// Mobs
 		String[] mobs = {"Slime", "Giant Animated Mushroom", "Feral Rabbit", "Giant Spider", "Bandit"};
 		int mobHealth = 10;
-		int mobAD = 5;
+		int mobAD = 10;
 		int mobEXP = 10;
 		int mobMoney = 5;
 		
@@ -1482,7 +1488,7 @@ public class MainRPG implements Runnable{
 				
 				while(mobFightHealth > 0) {
 					
-					System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+					System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 					System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 					System.out.println("\n\tWhat would you like to do?");
 					System.out.println("\t1. Attack");
@@ -1495,10 +1501,20 @@ public class MainRPG implements Runnable{
 					if(action.equals("1") && mobFightHealth >= 2) {
 						
 						int damageDealt = rand.nextInt(attackDmg);
-						int damageTaken = rand.nextInt(mobAD);
+						int damageTaken = rand.nextInt(mobAD) - defense;
 						
 						mobFightHealth -= damageDealt;
+						
+						if(damageTaken > 0) {
+							
 						health -= damageTaken;
+						}
+						
+						else if(damageTaken <= 0) {
+							
+							damageTaken = 1;
+							health -= damageTaken;
+						}
 						
 						System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 						System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -1762,13 +1778,6 @@ public class MainRPG implements Runnable{
 					System.out.println(" # You now have " + healthPots + " health potion(s). # ");
 				}
 				
-				if(rand.nextInt(100) < manaPotDrop) {
-					
-					manaPots++;
-					System.out.println(" # The " + enemy + " dropped a mana potion! # ");
-					System.out.println(" # You now have " + manaPots + " mana potion(s). # ");
-				}
-				
 				if(rand.nextInt(100) < bSwordDrop) {
 					
 					bronzeSword ++;
@@ -1818,15 +1827,13 @@ public class MainRPG implements Runnable{
 		// Mobs
 		String[] mobs = {"Goblin", "Giant Rat", "Cave Slime", "Skeleton", "Zombie"};
 		int mobHealth = 25;
-		int mobAD = 10;
-		int mobDEF = 5;
+		int mobAD = 15;
 		int mobEXP = 25;
 		int mobMoney = 15;
 		
 		String[] caveTroll = {"Cave Troll"};
 		int caveTrollHealth = 50;
 		int caveTrollAD = 20;
-		int caveTrollDEF = 10;
 		int caveTrollEXP = 50;
 		int caveTrollMoney = 50;
 		
@@ -1869,7 +1876,7 @@ public class MainRPG implements Runnable{
 				
 				while(mobFightHealth > 0) {
 					
-					System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+					System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 					System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 					System.out.println("\n\tWhat would you like to do?");
 					System.out.println("\t1. Attack");
@@ -1882,10 +1889,20 @@ public class MainRPG implements Runnable{
 					if(action.equals("1") && mobFightHealth >= 2) {
 						
 						int damageDealt = rand.nextInt(attackDmg);
-						int damageTaken = rand.nextInt(caveTrollAD);
+						int damageTaken = rand.nextInt(caveTrollAD) - defense;
 						
 						mobFightHealth -= damageDealt;
+						
+						if(damageTaken > 0) {
+							
 						health -= damageTaken;
+						}
+						
+						else if(damageTaken <= 0) {
+							
+							damageTaken = 1;
+							health -= damageTaken;
+						}
 						
 						System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 						System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -2193,7 +2210,7 @@ public class MainRPG implements Runnable{
 				
 				while(mobFightHealth > 0) {
 					
-					System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+					System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 					System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 					System.out.println("\n\tWhat would you like to do?");
 					System.out.println("\t1. Attack");
@@ -2206,10 +2223,20 @@ public class MainRPG implements Runnable{
 					if(action.equals("1") && mobFightHealth >= 2) {
 						
 						int damageDealt = rand.nextInt(attackDmg);
-						int damageTaken = rand.nextInt(mobAD);
+						int damageTaken = rand.nextInt(mobAD) - defense;
 						
 						mobFightHealth -= damageDealt;
+						
+						if(damageTaken > 0) {
+							
 						health -= damageTaken;
+						}
+						
+						else if(damageTaken <= 0) {
+							
+							damageTaken = 1;
+							health -= damageTaken;
+						}
 						
 						System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 						System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -2524,8 +2551,7 @@ public class MainRPG implements Runnable{
 		// Mobs
 		String[] mobs = {"Dryad", "Feral Unicorn", "Satyr", "Nymph", "Owlbear", "Troll"};
 		int mobHealth = 50;
-		int mobAD = 15;
-		int mobDEF = 10;
+		int mobAD = 25;
 		int mobEXP = 50;
 		int mobMoney = 50;
 		
@@ -2565,7 +2591,7 @@ public class MainRPG implements Runnable{
 				
 				while(mobFightHealth > 0) {
 					
-					System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+					System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 					System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 					System.out.println("\n\tWhat would you like to do?");
 					System.out.println("\t1. Attack");
@@ -2578,10 +2604,20 @@ public class MainRPG implements Runnable{
 					if(action.equals("1") && mobFightHealth >= 2) {
 						
 						int damageDealt = rand.nextInt(attackDmg);
-						int damageTaken = rand.nextInt(mobAD);
+						int damageTaken = rand.nextInt(mobAD) - defense;
 						
 						mobFightHealth -= damageDealt;
+						
+						if(damageTaken > 0) {
+							
 						health -= damageTaken;
+						}
+						
+						else if(damageTaken <= 0) {
+							
+							damageTaken = 1;
+							health -= damageTaken;
+						}
 						
 						System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 						System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -3783,7 +3819,7 @@ public class MainRPG implements Runnable{
 							System.out.println("What would you like to do?"
 									+ "\n");
 							System.out.println("1: Mana Potion\t\t50 copper");
-							System.out.println("2: Learn spell: Absorb/t2 silver");
+							System.out.println("2: Learn spell: Absorb  2 silver");
 							System.out.println("3: Leave");
 							
 							input = in.nextLine();
@@ -3833,7 +3869,7 @@ public class MainRPG implements Runnable{
 									
 									spellState ++;
 									silver -= 2;
-									System.out.println("You have been taught how to use the absorb spell!."
+									System.out.println("You have been taught how to use the absorb spell!"
 											+ "\n");
 								}
 								
@@ -4671,14 +4707,12 @@ public class MainRPG implements Runnable{
 		String[] mobs = {"Ogre", "Mountain Giant", "Giant Boar", "Centaur", "Dire Wolf"};
 		int mobHealth = 100;
 		int mobAD = 30;
-		int mobDEF = 20;
 		int mobEXP = 100;
 		int mobMoney = 1;
 		
 		String[] dragonGuard = {"Ancient Dragon Guardian"};
 		int dragonGuardHP = 150;
 		int dragonGuardAD = 70;
-		int dragonGuardDEF = 40;
 		int dragonGuardEXP = 150;
 		int dragonGuardMoney = 5;
 		
@@ -4717,7 +4751,7 @@ public class MainRPG implements Runnable{
 				
 				while(mobFightHealth > 0) {
 					
-					System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+					System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 					System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 					System.out.println("\n\tWhat would you like to do?");
 					System.out.println("\t1. Attack");
@@ -4730,10 +4764,20 @@ public class MainRPG implements Runnable{
 					if(action.equals("1") && mobFightHealth >= 2) {
 						
 						int damageDealt = rand.nextInt(attackDmg);
-						int damageTaken = rand.nextInt(dragonGuardAD);
+						int damageTaken = rand.nextInt(dragonGuardAD) - defense;
 						
 						mobFightHealth -= damageDealt;
+						
+						if(damageTaken > 0) {
+							
 						health -= damageTaken;
+						}
+						
+						else if(damageTaken <= 0) {
+							
+							damageTaken = 1;
+							health -= damageTaken;
+						}
 						
 						System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 						System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -5040,7 +5084,7 @@ public class MainRPG implements Runnable{
 				
 				while(mobFightHealth > 0) {
 					
-					System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+					System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 					System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 					System.out.println("\n\tWhat would you like to do?");
 					System.out.println("\t1. Attack");
@@ -5053,10 +5097,20 @@ public class MainRPG implements Runnable{
 					if(action.equals("1") && mobFightHealth >= 2) {
 						
 						int damageDealt = rand.nextInt(attackDmg);
-						int damageTaken = rand.nextInt(mobAD);
+						int damageTaken = rand.nextInt(mobAD) - defense;
 						
 						mobFightHealth -= damageDealt;
+						
+						if(damageTaken > 0) {
+							
 						health -= damageTaken;
+						}
+						
+						else if(damageTaken <= 0) {
+							
+							damageTaken = 1;
+							health -= damageTaken;
+						}
 						
 						System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 						System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -5780,6 +5834,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1") && currentShieldEquip == "nothing") {
 						
 						maxHealth += 5;
+						defense += 5;
 						currentShieldEquip = "Bronze Shield";
 						System.out.println("You fasten the bronze shield to your back, hoping to not get killed."
 								+ "\n");
@@ -5794,6 +5849,7 @@ public class MainRPG implements Runnable{
 					else if(input.equals("2") && currentShieldEquip == "Bronze Shield") {
 						
 						maxHealth -= 5;
+						defense -= 5;
 						currentShieldEquip = "nothing";
 						System.out.println("You remove the shield from your back."
 								+ "\n");
@@ -5898,6 +5954,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1") && currentShieldEquip == "nothing") {
 						
 						maxHealth += 10;
+						defense += 10;
 						currentShieldEquip = "Iron Shield";
 						System.out.println("You fasten the iron shield to your back, hoping to not get killed."
 								+ "\n");
@@ -5912,6 +5969,7 @@ public class MainRPG implements Runnable{
 					else if(input.equals("2") && currentShieldEquip == "Iron Shield") {
 						
 						maxHealth -= 10;
+						defense -= 10;
 						currentShieldEquip = "nothing";
 						System.out.println("You remove the shield from your back."
 								+ "\n");
@@ -6016,6 +6074,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1") && currentShieldEquip == "nothing") {
 						
 						maxHealth += 20;
+						defense += 15;
 						currentShieldEquip = "Steel Shield";
 						System.out.println("You fasten the steel shield to your back, hoping to not get killed."
 								+ "\n");
@@ -6030,6 +6089,7 @@ public class MainRPG implements Runnable{
 					else if(input.equals("2") && currentShieldEquip == "Steel Shield") {
 						
 						maxHealth -= 20;
+						defense -= 15;
 						currentShieldEquip = "nothing";
 						System.out.println("You remove the shield from your back."
 								+ "\n");
@@ -6133,6 +6193,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1") && currentShieldEquip == "nothing") {
 						
 						maxHealth += 25;
+						defense += 20;
 						currentShieldEquip = "Mithril Shield";
 						System.out.println("You fasten the mithril shield to your back, hoping to not get bloody."
 								+ "\n");
@@ -6147,6 +6208,7 @@ public class MainRPG implements Runnable{
 					else if(input.equals("2") && currentShieldEquip == "Mithril Shield") {
 						
 						maxHealth -= 25;
+						defense -= 20;
 						currentShieldEquip = "nothing";
 						System.out.println("You remove the shield from your back."
 								+ "\n");
@@ -6251,6 +6313,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1") && currentShieldEquip == "nothing") {
 						
 						maxHealth += 30;
+						defense += 25;
 						currentShieldEquip = "Guild Shield";
 						System.out.println("You fasten the guild shield to your back, hoping to not get bloody."
 								+ "\n");
@@ -6265,6 +6328,7 @@ public class MainRPG implements Runnable{
 					else if(input.equals("2") && currentShieldEquip == "Guild Shield") {
 						
 						maxHealth -= 30;
+						defense -= 25;
 						currentShieldEquip = "nothing";
 						System.out.println("You remove the shield from your back."
 								+ "\n");
@@ -6369,6 +6433,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1") && currentShieldEquip == "nothing") {
 						
 						maxHealth += 35;
+						defense += 30;
 						currentShieldEquip = "Adamant Shield";
 						System.out.println("You fasten the adamant shield to your back, hoping to not get bloody."
 								+ "\n");
@@ -6383,6 +6448,7 @@ public class MainRPG implements Runnable{
 					else if(input.equals("2") && currentShieldEquip == "Adamant Shield") {
 						
 						maxHealth -= 35;
+						defense -= 30;
 						currentShieldEquip = "nothing";
 						System.out.println("You remove the shield from your back."
 								+ "\n");
@@ -6487,6 +6553,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1") && currentShieldEquip == "nothing") {
 						
 						maxHealth += 50;
+						defense += 40;
 						currentShieldEquip = "Dragon Shield";
 						System.out.println("You fasten the dragon shield to your back, knowing it will protect you."
 								+ "\n");
@@ -6501,6 +6568,7 @@ public class MainRPG implements Runnable{
 					else if(input.equals("2") && currentShieldEquip == "Dragon Shield") {
 						
 						maxHealth -= 50;
+						defense -= 40;
 						currentShieldEquip = "nothing";
 						System.out.println("You remove the large shield from your back."
 								+ "\n");
@@ -6545,7 +6613,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1")) {
 						
 						healthPots --;
-						health += 20;
+						health += healthPotHeal;
 						
 						if(health > maxHealth) {
 							health = maxHealth;
@@ -6576,7 +6644,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1")) {
 						
 						superHealthPots --;
-						health += 40;
+						health += superHealthPotHeal;
 						
 						if(health > maxHealth) {
 							health = maxHealth;
@@ -6607,7 +6675,7 @@ public class MainRPG implements Runnable{
 					if(input.equals("1")) {
 						
 						manaPots --;
-						mana += 10;
+						mana += manaPotRestore;
 						System.out.println("You drink a mana potion, restoring " + manaPotRestore + " Mana."
 								+ "\n");
 					}
@@ -6633,7 +6701,7 @@ public class MainRPG implements Runnable{
 					
 					if(input.equals("1") && currentSwordEquip == "nothing") {
 						
-						attackDmg += 300;
+						attackDmg += 100;
 						currentSwordEquip = "FlintLock";
 						System.out.println("You strap the FlintLock to your thigh, ready to fire."
 								+ "\n");
@@ -6647,7 +6715,7 @@ public class MainRPG implements Runnable{
 					
 					else if(input.equals("2") && currentSwordEquip == "FlintLock") {
 						
-						attackDmg -= 300;
+						attackDmg -= 100;
 						currentSwordEquip = "nothing";
 						System.out.println("You remove the FlintLock from your leg."
 								+ "\n");
@@ -6692,10 +6760,11 @@ public class MainRPG implements Runnable{
 				
 				System.out.println(" + You are level " + level + " and you have " + experience + " XP +");
 				System.out.println(" + You have " + health + "/" + maxHealth + " health and " + mana + " mana +");
-				System.out.println(" + You have " + attackDmg + " attack damage +");
+				System.out.println(" + You have " + attackDmg + " attack damage and " + defense + " defense +");
 				System.out.println(" $ You have " + gold + " gold pieces, " + silver + " silver pieces, and " + copper + " copper pieces $"
 						+ "\n");
-				System.out.println("You are currently wielding " + currentSwordEquip + "."
+				System.out.println("Currently wielding " + currentSwordEquip + "."
+						+ "\n\t\t   " + currentShieldEquip + "."
 						+ "\n");
 						
 			}
@@ -6749,22 +6818,18 @@ public class MainRPG implements Runnable{
 		String[] mobs = {"Hatchling Dragon", "Young Drake", "Giant Eagle", "Dragon Worshipper", "Strong Fire Elemental"};
 		int mobHealth = 150;
 		int mobAD = 60;
-		int mobDEF = 40;
-		int mobSPD = 40;
 		int mobEXP = 150;
 		int mobMoney = 5;
 		
 		String[] dragon = {"Ancient Dragon"};
 		int dragonHP = 400;
 		int dragonAD = 90;
-		int dragonDEF = 60;
 		int dragonEXP = 400;
 		int dragonMoney = 1;
 		
 		String[] nestMobs = {"Fire Drake", "Young Dragon", "Dragonfire Elemental", "Master Dragon Worshipper"};
 		int nestMobHP = 250;
 		int nestMobAD = 70;
-		int nestMobDEF = 50;
 		int nestMobEXP = 250;
 		int nestMobMoney = 25;
 		
@@ -6803,9 +6868,8 @@ public class MainRPG implements Runnable{
 					System.out.println("1: Fight the Dragon");
 					System.out.println("2: Search the Dragon's Nest");
 					System.out.println("3: Fight a monster");
-					System.out.println("4: Leave");
-					System.out.println("5: Inventory"
-							+ "\n");
+					System.out.println("4: Retreat down mountain");
+					System.out.println("5: Inventory");
 					
 					input = in.nextLine();
 					
@@ -6825,7 +6889,7 @@ public class MainRPG implements Runnable{
 						
 						while(mobFightHealth > 0) {
 							
-							System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+							System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 							System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 							System.out.println("\n\tWhat would you like to do?");
 							System.out.println("\t1. Attack");
@@ -6840,10 +6904,20 @@ public class MainRPG implements Runnable{
 								if(rand.nextInt(100) > 20) {
 									
 									int damageDealt = rand.nextInt(attackDmg);
-									int damageTaken = rand.nextInt(dragonAD);
+									int damageTaken = rand.nextInt(dragonAD) - defense;
 									
 									mobFightHealth -= damageDealt;
+									
+									if(damageTaken > 0) {
+										
 									health -= damageTaken;
+									}
+									
+									else if(damageTaken <= 0) {
+										
+										damageTaken = 1;
+										health -= damageTaken;
+									}
 									
 									System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 									System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -6853,7 +6927,7 @@ public class MainRPG implements Runnable{
 								else {
 									
 									int damageDealt = rand.nextInt(attackDmg);
-									int damageTaken = 120;
+									int damageTaken = 80;
 									
 									mobFightHealth -= damageDealt;
 									health -= damageTaken;
@@ -7181,7 +7255,7 @@ public class MainRPG implements Runnable{
 						
 						while(mobFightHealth > 0) {
 							
-							System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+							System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 							System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 							System.out.println("\n\tWhat would you like to do?");
 							System.out.println("\t1. Attack");
@@ -7194,10 +7268,20 @@ public class MainRPG implements Runnable{
 							if(action.equals("1") && mobFightHealth >= 2) {
 								
 								int damageDealt = rand.nextInt(attackDmg);
-								int damageTaken = rand.nextInt(nestMobAD);
+								int damageTaken = rand.nextInt(nestMobAD) - defense;
 								
 								mobFightHealth -= damageDealt;
+								
+								if(damageTaken > 0) {
+									
 								health -= damageTaken;
+								}
+								
+								else if(damageTaken <= 0) {
+									
+									damageTaken = 1;
+									health -= damageTaken;
+								}
 								
 								System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 								System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -7521,7 +7605,7 @@ public class MainRPG implements Runnable{
 				
 				while(mobFightHealth > 0) {
 					
-					System.out.println("\tYour HP: " + health + "\tMana: " + mana);
+					System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
 					System.out.println("\t"  + enemy + "'s HP: " + mobFightHealth);
 					System.out.println("\n\tWhat would you like to do?");
 					System.out.println("\t1. Attack");
@@ -7534,10 +7618,20 @@ public class MainRPG implements Runnable{
 					if(action.equals("1") && mobFightHealth >= 2) {
 						
 						int damageDealt = rand.nextInt(attackDmg);
-						int damageTaken = rand.nextInt(mobAD);
+						int damageTaken = rand.nextInt(mobAD) - defense;
 						
 						mobFightHealth -= damageDealt;
+						
+						if(damageTaken > 0) {
+							
 						health -= damageTaken;
+						}
+						
+						else if(damageTaken <= 0) {
+							
+							damageTaken = 1;
+							health -= damageTaken;
+						}
 						
 						System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
 						System.out.println("\t> You recieve " + damageTaken + " points of damage!");
@@ -8052,6 +8146,37 @@ public class MainRPG implements Runnable{
 	public void run() {
 		
 		running = true;
+	}
+	
+	public static int getHealth() {
+		return MainRPG.health;
+	}
+	public static int getMaxHealth() {
+		return MainRPG.maxHealth;
+	}
+	public static int getMana() {
+		return MainRPG.mana;
+	}
+	public static int getattackDamage() {
+		return MainRPG.attackDmg;
+	}
+	public static int getDefense() {
+		return MainRPG.defense;
+	}
+	public static int getLevel() {
+		return MainRPG.level;
+	}
+	public static int getEXP() {
+		return MainRPG.experience;
+	}
+	public static String getSword() {
+		return MainRPG.currentSwordEquip;
+	}
+	public static String getShield() {
+		return MainRPG.currentShieldEquip;
+	}
+	public static int getArea() {
+		return MainRPG.area;
 	}
 
 }
