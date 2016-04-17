@@ -130,8 +130,16 @@ public class MainRPG implements Runnable{
             	MainRPG.name = e.getActionCommand();
                 theGUI.appendMainArea("Your name is: ".concat(e.getActionCommand()));
                 //TODO do more stuff. There is a better way to do this.
+                theGUI.appendMainArea("...");
+                theGUI.appendMainArea("You awake in a field, wheat rising all around you."
+					+ "\nThe only thing you see is a small town looming ahead."
+					+ "\nYou walk to the town, curious as to where you are."
+					+ "\n");
+                //This makes it only run once.
+                theGUI.commandField.removeActionListener(this);
             }
         });
+
 	}
 
 	//Expect the GUI as an arg.
