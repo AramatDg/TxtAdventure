@@ -74,6 +74,10 @@ public class GUI implements Runnable, KeyListener {
         main.setup();
     }
 
+    public void giveResponseToLastSub(ActionEvent e) {
+
+    }
+
     /**
      * Creates the GUI.
      */
@@ -139,6 +143,16 @@ public class GUI implements Runnable, KeyListener {
         mainArea = new JTextArea(24, 30);
         commandField = new JTextField();
         commandField.addKeyListener(this);
+
+        commandField.addActionListener(new AbstractAction()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                GUI.this.commandField.setText("");
+            }
+        });
     }
 
     /**
