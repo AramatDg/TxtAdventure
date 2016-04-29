@@ -34,6 +34,7 @@ public class MainRPG implements Runnable{
 	public static int gameBeat = 0;
 
 	// Default player information
+	static String input;
 	static String name;
 	static int maxHealth = 20;
 	static int health = 20;
@@ -51,7 +52,7 @@ public class MainRPG implements Runnable{
 	static int[] levelArray = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
 	static int gold = 0;
 	static int silver = 0;
-	static int copper = 50;
+	static int copper = 0;
 	static int drunk = 0;
 	static int warriorToken = 0;
 	static String currentSwordEquip = "nothing";
@@ -112,15 +113,18 @@ public class MainRPG implements Runnable{
 	static int dSwordDrop = 100;
 	static int dShieldDrop = 100;
 	static int flintLockDrop = 100;
+	
 	public GUI theGUI;
 
 	public MainRPG(GUI theGUI) {
 		this.theGUI = theGUI;
 	}
-
+	
 	public void setup() {
-		theGUI.appendMainArea("Enter your name!");
-
+		
+		theGUI.appendMainArea("Enter your name!"
+				+ "\n");
+		
 		theGUI.commandField.addActionListener(new AbstractAction()
         {
 
@@ -135,11 +139,249 @@ public class MainRPG implements Runnable{
 					+ "\nThe only thing you see is a small town looming ahead."
 					+ "\nYou walk to the town, curious as to where you are."
 					+ "\n");
-                //This makes it only run once.
-                theGUI.commandField.removeActionListener(this);
+                theGUI.appendMainArea("You enter the town, it seems rather familiar."
+    					+ "\n");
+                
+                theGUI.commandField.removeActionListener(this); 
+                townMain();
             }
         });
+	}
+	
+	public void townMain() {
+				 	        
+         System.out.println("Where would you like to go?"
+         		+ "\n");
+         System.out.println("1: Tavern");
+         System.out.println("2: General Store");
+         System.out.println("3: Town's Square");
+         System.out.println("4: Inventory"
+        		+ "\n");
+         	
+        theGUI.commandField.addActionListener(new AbstractAction() {
+         		
+         	@Override
+         	public void actionPerformed(ActionEvent e) {
+         			
+         		if(e.getActionCommand().equals("1")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			theGUI.appendMainArea("You enter the Tavern through sturdy oak double doors. "
+    						+ "\nSmelling a hardy aroma of wheat beer and a small fire. "
+    						+ "\nThere appears to be only a Shady Man sitting in one corner"
+    						+ "\nand the Barkeeper cleaning a well polished counter."
+    						+ "\n");
+         			tavern();
+         		}
+         		
+         		else if(e.getActionCommand().equals("2")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("You push open a solid door and enter the General Store."
+    						+ "\nThere is one lonely women looking for fresh ingredients and the Shopkeeper sorting his shelves."
+    						+ "\n "
+    						+ "\nOh, the Shopkeeper exclaims, a customer!  He hurries back behind the counter."
+    						+ "\nJust take a look around and come up to pay when you are ready, items are marked with prices."
+    						+ "\n");
+         			townMain();
+         		}
+         		
+         		else if(e.getActionCommand().equals("3")) {
+         			theGUI.commandField.removeActionListener(this);
+         			townMain();
+         		}
+         		
+        		else if(e.getActionCommand().equals("4")) {
+        			theGUI.commandField.removeActionListener(this);
+         			townMain();
+         		}
+        	}    
+         	
+         });
+	}
+	
+	public void tavern() {
+		
+		theGUI.appendMainArea("");
+	   	System.out.println("What would you like to do?"
+				+ "\n");
+		System.out.println("1: Speak to the Barkeeper");
+		System.out.println("2: Speak to the Shady Man");
+		System.out.println("3: Leave");
+						
+		theGUI.commandField.addActionListener(new AbstractAction() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+								
+				if(e.getActionCommand().equals("1")) {
+					theGUI.commandField.removeActionListener(this);
+					barkeeper();
+				}
+								
+				else if(e.getActionCommand().equals("2")) {
+					theGUI.commandField.removeActionListener(this);
+					shadyMan();
+				}
+								
+				else if(e.getActionCommand().equals("3")) {
+					theGUI.commandField.removeActionListener(this);
+					
+					System.out.println("You walk out of the Tavern."
+							+ "\n");
+					townMain();
+				}				
+			}
+	    					
+	    });					
+	}
+	
+	public void barkeeper() {
+		
+		theGUI.appendMainArea("");
+		System.out.println("You walk up to the Barkeeper as he eyes you suspiciously. "
+				+ "\nWhat can I do fer ya?  He asks."
+				+ "\n");
+		System.out.println("1: Buy a beer");
+		System.out.println("2: Rent a room for the night");
+		System.out.println("3: Ask about town");
+		System.out.println("4: Leave");
+		
+		theGUI.commandField.addActionListener(new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+									
+				if(e.getActionCommand().equals("1")) {
+					theGUI.commandField.removeActionListener(this);
+					
+					System.out.println("Want a beer do ya?  That'll be five copper Carlons."
+							+ "\n");
+					System.out.println("1: Buy");
+					System.out.println("2: Nevermind");
+					
+					theGUI.commandField.addActionListener(new AbstractAction() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							if(e.getActionCommand().equals("1") && copper >= 5) {
+								theGUI.commandField.removeActionListener(this);
+								copper -= 5;
+								beer ++;
+								System.out.println("You purchase a beer. "
+										+ "\n");
+								System.out.println("The Barkeeper pours the drink into a mug."
+										+ "\nWell then, here you are.  Enjoy!"
+										+ "\n");
+								barkeeper();
+							}
+							
+							else if(e.getActionCommand().equals("1") && copper < 5) {
+								theGUI.commandField.removeActionListener(this);
+								
+								System.out.println("You do not have enough to buy a drink. "
+										+ "\n");
+								barkeeper();
+							}
+							
+							else if(e.getActionCommand().equals("2")) {
+								theGUI.commandField.removeActionListener(this);
+								
+								System.out.println("You have second thoughts and turn away."
+										+ "\n");
+								barkeeper();
+							}
+							
+						}
+						
+					});
+				}
+									
+				else if(e.getActionCommand().equals("2")) {
+					theGUI.commandField.removeActionListener(this);
+					tavern();
+				}
+					
+				else if(e.getActionCommand().equals("3")) {
+					theGUI.commandField.removeActionListener(this);
+										
+					System.out.println("You lean on the well polished counter of the bar and ask about the town"
+							+ "\n"
+							+ "\nThe Barkeeper answers, Well we have had a rough patch with monsters in the forest recently,"
+							+ "\nnot to mention the increased tax rates and theft is getting out of hand."
+							+ "\nThough overall, I love Haraolen, its been my home since birth."
+							+ "\n"
+							+ "\nTo which he gets lost in his memories and ignores you."
+							+ "\n");
+					tavern();
+				}
+									
+				else if(e.getActionCommand().equals("4")) {
+					theGUI.commandField.removeActionListener(this);
+					tavern();
+				}				
+			}
+													
+		});	
+	}
+	
+	public void shadyMan() {
+		
+		if(beer == 0 && shadyManState == 0) {
+			
+			shadyManState = 1;
+			System.out.println("You approach the Shady Man and he eyes you darkly. "
+					+ "\nYou can see him pulling a Flintlock from his holster.  "
+					+ "\nWith good judgement, you decide to leave this fellow alone for now."
+					+ "\n");
+			tavern();
+		}
+		
+		else if(beer == 0 && shadyManState == 1) {
+
+			shadyManState = 2;
+			System.out.println("You approach the Shady Man and he stares you down. "
+				+ "\nYou can see him with his Flintlock already pulled out.  "
+				+ "\nYou turn around and decide to leave this irritated fellow alone for now."
+				+ "\n");
+			tavern();
+		}
+		
+		else if(beer > 0) {
+			
+			shadyManState = 0;
+			System.out.println("You approach the Shady Man and his eyes dart to the beer in your hand."
+					+ "\nWell what do we have here, he says still staring at the drink, a friend perhaps?"
+					+ "\n"
+					+ "\nWhat would you like to do?");
+			System.out.println("1: Give the Shady Man a beer");
+			System.out.println("2: Awkwardly turn and walk away slowly");
+			
+			theGUI.commandField.addActionListener(new AbstractAction() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+									
+					if(e.getActionCommand().equals("1")) {
+						theGUI.commandField.removeActionListener(this);
+						
+						beer --;
+						tavern();
+					}
+									
+					else if(e.getActionCommand().equals("2")) {
+						theGUI.commandField.removeActionListener(this);
+						
+						System.out.println("You turn and awkwardly walk away."
+								+ "\n");
+						tavern();
+					}
+					
+				}
+		    					
+		    });
+		}	
 	}
 
 	//Expect the GUI as an arg.

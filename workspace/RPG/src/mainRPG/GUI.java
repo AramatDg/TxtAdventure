@@ -6,13 +6,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.Console;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,7 +21,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 public class GUI implements Runnable, KeyListener {
-	private static final long serialVersionUID = 1L;
 
 	private JLabel locationLabel;
     private JTextArea playerInfo;
@@ -151,9 +148,11 @@ public class GUI implements Runnable, KeyListener {
             public void actionPerformed(ActionEvent e)
             {
                 GUI.this.commandField.setText("");
+                mainArea.setCaretPosition(mainArea.getText().length());
             }
         });
     }
+       
 
     /**
      * Lays out all components.
@@ -255,13 +254,6 @@ public class GUI implements Runnable, KeyListener {
 		int key = e.getKeyCode();
 
 		if(key == KeyEvent.VK_1 + KeyEvent.VK_ENTER) {
-		}
-
-		if(key == KeyEvent.VK_ENTER) {
-			playerInfo.removeAll();
-			playerInfo.setText("HP " + health + "/" + maxHealth + "\nMana " + mana + "\nAD   " + ad + "\nDEF " + def + "\nLvl    " + lvl + "\nExp  " + exp);
-			playerInfo.revalidate();
-			playerInfo.repaint();
 		}
 
 	}
