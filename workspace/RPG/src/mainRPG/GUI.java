@@ -2,6 +2,7 @@ package mainRPG;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -20,15 +21,21 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
-public class GUI implements Runnable, KeyListener {
+import audio.MusicPlayer;
 
-	private JLabel locationLabel;
-    private JTextArea playerInfo;
-    private JTextArea questDisplay;
-    private JTextArea equipmentDisplay;
-    private JTextArea mainArea;
+public class GUI implements Runnable {
+
+	public JLabel locationLabel;
+    public JTextArea playerInfo;
+    public JTextArea questDisplay;
+    public JTextArea equipmentDisplay;
+    public JTextArea mainArea;
     public JTextField commandField;
 
+	public final int WIDTH = 800;
+	public final int HEIGHT = 550;
+	public final Dimension gameSize = new Dimension(WIDTH, HEIGHT);
+    
     MainRPG main;
     int area;
     int health;
@@ -49,6 +56,9 @@ public class GUI implements Runnable, KeyListener {
      */
     public static void main(String[] args) {
         new GUI().run();
+        ThreadPool pool = new ThreadPool(3);
+		MusicPlayer player = new MusicPlayer("Opening", "Town", "Sanctuary", "The Empire");
+		pool.runTask(player);
     }
 
     /**
@@ -83,6 +93,7 @@ public class GUI implements Runnable, KeyListener {
         createComponents();
         arrangeComponents();
         redirectSystemStreams();
+        frame.setPreferredSize(gameSize);
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -95,51 +106,13 @@ public class GUI implements Runnable, KeyListener {
 
     private void createComponents() {
 
-    	if(area == 1) {
-
-			location = "Town";
-		}
-		else if(area == 2) {
-
-			location = "Forest";
-		}
-		else if(area == 3) {
-
-			location = "Cave";
-		}
-		else if(area == 4) {
-
-			location = "Dark Forest";
-		}
-		else if(area == 5) {
-
-			location = "City";
-		}
-		else if(area == 6) {
-
-			location = "Castle";
-		}
-		else if(area == 7) {
-
-			location = "Mountain";
-		}
-		else if(area == 8) {
-
-			location = "Inventory";
-		}
-		else if(area == 9) {
-
-			location = "Dragon's Nest";
-		}
-
         frame.setBackground(Color.WHITE);
-        locationLabel = new JLabel(" Your location: " + location);
+        locationLabel = new JLabel(" Your location:");
         playerInfo = new JTextArea();
         equipmentDisplay = new JTextArea();
         questDisplay = new JTextArea();
         mainArea = new JTextArea(24, 30);
         commandField = new JTextField();
-        commandField.addKeyListener(this);
 
         commandField.addActionListener(new AbstractAction()
         {
@@ -247,23 +220,5 @@ public class GUI implements Runnable, KeyListener {
     	  System.setOut(new PrintStream(out, true));
     	  System.setErr(new PrintStream(out, true));
     	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-
-		int key = e.getKeyCode();
-
-		if(key == KeyEvent.VK_1 + KeyEvent.VK_ENTER) {
-		}
-
-	}
-
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-	}
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-	}
 
 }

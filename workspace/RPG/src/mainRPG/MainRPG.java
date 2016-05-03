@@ -67,6 +67,14 @@ public class MainRPG implements Runnable{
 	static int absorbDamage = 10; // Also restores 10Hp
 	static int absorbMana = 25;
 
+	// Monster setup, changes based on area interaction
+	String enemy;
+	String[] mobs = {""};
+	static int mobHealth = 10;
+	static int mobAD = 10;
+	static int mobEXP = 10;
+	static int mobMoney = 5;	
+	
 	// Inventory items - Potions, Food, Equipment, Items
 	static int healthPots = 0;
 	static int superHealthPots = 0;
@@ -133,7 +141,6 @@ public class MainRPG implements Runnable{
             {
             	MainRPG.name = e.getActionCommand();
                 theGUI.appendMainArea("Your name is: ".concat(e.getActionCommand()));
-                //TODO do more stuff. There is a better way to do this.
                 theGUI.appendMainArea("...");
                 theGUI.appendMainArea("You awake in a field, wheat rising all around you."
 					+ "\nThe only thing you see is a small town looming ahead."
@@ -149,6 +156,8 @@ public class MainRPG implements Runnable{
 	}
 	
 	public void townMain() {
+		 area = 1;
+		 theGUI.locationLabel.setText(" Your location: Town");
 				 	        
          System.out.println("Where would you like to go?"
          		+ "\n");
@@ -183,12 +192,16 @@ public class MainRPG implements Runnable{
     						+ "\nOh, the Shopkeeper exclaims, a customer!  He hurries back behind the counter."
     						+ "\nJust take a look around and come up to pay when you are ready, items are marked with prices."
     						+ "\n");
-         			townMain();
+         			smallShop();
          		}
          		
          		else if(e.getActionCommand().equals("3")) {
          			theGUI.commandField.removeActionListener(this);
-         			townMain();
+         			
+         			System.out.println("You venture into the near vacant Town Square, decorated by a single large fountain. "
+    						+ "\nThere are only a few farmers attempting to sell cheap goods, and a few Guards lazily standing watch."
+    						+ "\n");
+         			townSquare();
          		}
          		
         		else if(e.getActionCommand().equals("4")) {
@@ -216,6 +229,10 @@ public class MainRPG implements Runnable{
 								
 				if(e.getActionCommand().equals("1")) {
 					theGUI.commandField.removeActionListener(this);
+					
+					System.out.println("You walk up to the Barkeeper as he eyes you suspiciously. "
+							+ "\nWhat can I do fer ya?  He asks."
+							+ "\n");
 					barkeeper();
 				}
 								
@@ -238,14 +255,11 @@ public class MainRPG implements Runnable{
 	
 	public void barkeeper() {
 		
-		theGUI.appendMainArea("");
-		System.out.println("You walk up to the Barkeeper as he eyes you suspiciously. "
-				+ "\nWhat can I do fer ya?  He asks."
-				+ "\n");
 		System.out.println("1: Buy a beer");
 		System.out.println("2: Rent a room for the night");
 		System.out.println("3: Ask about town");
-		System.out.println("4: Leave");
+		System.out.println("4: Leave"
+				+ "\n");
 		
 		theGUI.commandField.addActionListener(new AbstractAction() {
 
@@ -300,7 +314,66 @@ public class MainRPG implements Runnable{
 									
 				else if(e.getActionCommand().equals("2")) {
 					theGUI.commandField.removeActionListener(this);
-					tavern();
+					
+					System.out.println("Want to stay for the night eh?  Very well, twenty five copper Carlons."
+							+ "\n");
+					System.out.println("1: Rent");
+					System.out.println("2: Nevermind");
+					
+					theGUI.commandField.addActionListener(new AbstractAction() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							if(e.getActionCommand().equals("1") && copper >= 25) {
+								theGUI.commandField.removeActionListener(this);
+								
+								copper -= 25;
+								health += 25;
+								
+								if(drunk > 0) {
+
+									drunk = 0;
+								}
+
+								else if(drunk >= 5) {
+
+									health += 5;
+									attackDmg += 5;
+									drunk = 0;
+								}
+
+								if(health > maxHealth) {
+									health = maxHealth;
+								}
+
+								System.out.println("You hand over the money and head upstairs for some much needed rest."
+										+ "\n"
+										+ "\nZZzzzzzZZZzzzzz"
+										+ "\n"
+										+ "\nYou awake feeling refreshed and ready for an adventure!"
+										+ "\n");
+								barkeeper();
+							}
+							
+							else if(e.getActionCommand().equals("1") && copper < 25) {
+								theGUI.commandField.removeActionListener(this);
+								
+								System.out.println("You do not have enough to rent a room. "
+										+ "\n");
+								barkeeper();
+							}
+							
+							else if(e.getActionCommand().equals("2")) {
+								theGUI.commandField.removeActionListener(this);
+								
+								System.out.println("You have second thoughts and turn away."
+										+ "\n");
+								barkeeper();
+							}							
+						}
+						
+					});
 				}
 					
 				else if(e.getActionCommand().equals("3")) {
@@ -314,7 +387,7 @@ public class MainRPG implements Runnable{
 							+ "\n"
 							+ "\nTo which he gets lost in his memories and ignores you."
 							+ "\n");
-					tavern();
+					barkeeper();
 				}
 									
 				else if(e.getActionCommand().equals("4")) {
@@ -348,6 +421,32 @@ public class MainRPG implements Runnable{
 			tavern();
 		}
 		
+		else if(beer < 1 && shadyManState == 2) {
+
+			shadyManState = 3;
+			System.out.println("With bad judgement, you approach the Shady Man again. "
+				+ "\nYou can see him pulling back the hammer on his Flintlock.  "
+				+ "\nYou turn and leave this angry fellow alone."
+				+ "\n");
+			tavern();
+		}
+
+		else if(beer < 1 && shadyManState == 3) {
+
+			health = 0;
+			pInfoUpdate();
+			
+			System.out.println("You stupidly walk back over to the Shady Man. "
+				+ "\nYou see him level his Flintlock at your head with finger on the trigger.  "
+				+ "\nYou have a good clue on what happens ne---------."
+				+ "\n"
+				+ "\nThe hammer slams down and the barrel is thrown backwards with recoil"
+				+ "\n"
+				+ "\nYour body collapses to the floor, head hollowed, and brain matter splattered everywhere."
+				+ "\n");
+			endGame();
+		}
+		
 		else if(beer > 0) {
 			
 			shadyManState = 0;
@@ -367,7 +466,7 @@ public class MainRPG implements Runnable{
 						theGUI.commandField.removeActionListener(this);
 						
 						beer --;
-						tavern();
+						tavern();																				// Finish interactions
 					}
 									
 					else if(e.getActionCommand().equals("2")) {
@@ -376,12 +475,1067 @@ public class MainRPG implements Runnable{
 						System.out.println("You turn and awkwardly walk away."
 								+ "\n");
 						tavern();
-					}
-					
+					}				
 				}
 		    					
 		    });
 		}	
+	}
+	
+	public void smallShop() {
+		
+		System.out.println("What would you like to buy?"
+				+ "\n");
+		System.out.println("1: Apple\t\t10 copper");
+		System.out.println("2: Bread\t\t15 copper");
+		System.out.println("3: Bronze Sword\t50 copper");
+		System.out.println("4: Bronze Shield\t50 copper");
+		System.out.println("5: Lantern\t\t30 copper");
+		System.out.println("6: Sell");
+		System.out.println("7: Leave the store"
+				+ "\n");
+		
+		theGUI.commandField.addActionListener(new AbstractAction() {
+      		
+	         	@Override
+	         	public void actionPerformed(ActionEvent e) {         			         	
+	         			
+	         		if(e.getActionCommand().equals("1")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         			
+	         			System.out.println("Buy an apple for 10 copper Carlons?"
+	        					+ "\n");
+	        			System.out.println("1: Buy");
+	        			System.out.println("2: Nevermind");
+	        			
+	        			theGUI.commandField.addActionListener(new AbstractAction() {
+	        		      		
+	        		         	@Override
+	        		         	public void actionPerformed(ActionEvent e) {    
+	        		         		
+	        		         		if(e.getActionCommand().equals("1") && copper >= 10) {
+	        		         			theGUI.commandField.removeActionListener(this);
+	        		         			
+	        		         			apple ++;
+	        		         			copper -= 10;
+	        		         			System.out.println("You have bought an apple."
+	        		         					+ "\n");
+	        		         			smallShop();
+	        		         		}
+
+	        		         		else if(e.getActionCommand().equals("1") && copper < 10) {
+	        		         			theGUI.commandField.removeActionListener(this);
+	        		         			
+	        		         			System.out.println("You do not have enough for this item."
+	        		         					+ "\n");
+	        		         			smallShop();
+	        		         		}
+	        		         		
+	        		         		else if(e.getActionCommand().equals("2")) {
+	        		         			theGUI.commandField.removeActionListener(this);
+	        		         			
+	        		         			System.out.println("You continue looking."
+	        		    						+ "\n");
+	        		         			smallShop();
+	        		         		}
+	        		         		
+	        		         	}
+	        			});
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("2")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         			
+	         			System.out.println("Buy bread for 15 copper Carlons?"
+	        					+ "\n");
+	        			System.out.println("1: Buy");
+	        			System.out.println("2: Nevermind");
+	        			
+	        			theGUI.commandField.addActionListener(new AbstractAction() {
+	        		      		
+	        		         	@Override
+	        		         	public void actionPerformed(ActionEvent e) {    
+	        		         		
+	        		         		if(e.getActionCommand().equals("1") && copper >= 15) {
+	        		         			theGUI.commandField.removeActionListener(this);
+	        		         			
+	        		         			bread ++;
+	        		    				copper -= 15;
+	        		    				System.out.println("You have bought a loaf of bread."
+	        		    						+ "\n");
+	        		         			smallShop();
+	        		         		}
+
+	        		         		else if(e.getActionCommand().equals("1") && copper < 15) {
+	        		         			theGUI.commandField.removeActionListener(this);
+	        		         			
+	        		         			System.out.println("You do not have enough for this item."
+	        		         					+ "\n");
+	        		         			smallShop();
+	        		         		}
+	        		         		
+	        		         		else if(e.getActionCommand().equals("2")) {
+	        		         			theGUI.commandField.removeActionListener(this);
+	        		         			
+	        		         			System.out.println("You continue looking."
+	        		    						+ "\n");
+	        		         			smallShop();
+	        		         		}        		         		
+	        		         	}
+	        		         	
+	        			});
+
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("3")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         				
+	         			System.out.println("Buy bronze sword for 50 copper Carlons?"
+	        					+ "\n");
+	        			System.out.println("1: Buy");
+	        			System.out.println("2: Nevermind");
+	         			
+	         			theGUI.commandField.addActionListener(new AbstractAction() {
+	         		      		
+	         		         	@Override
+	         		         	public void actionPerformed(ActionEvent e) {    
+	         		         		
+	         		         		if(e.getActionCommand().equals("1") && copper >= 50) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			bronzeSword ++;
+	         		         			copper -= 50;
+	         		         			System.out.println("You have bought a bronze sword."
+	         		         					+ "\n");
+	         		         			smallShop();
+	         		         		}
+
+	         		         		else if(e.getActionCommand().equals("1") && copper < 50) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			System.out.println("You do not have enough for this item."
+	         		         					+ "\n");
+	         		         			smallShop();
+	         		         		}
+	         		         		
+	         		         		else if(e.getActionCommand().equals("2")) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			System.out.println("You continue looking."
+	         		    						+ "\n");
+	         		         			smallShop();
+	         		         		}        		         		
+	         		         	}
+	         		         	
+	         			});
+
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("4")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         				
+	         			System.out.println("Buy bronze shield for 50 copper Carlons?"
+	        					+ "\n");
+	        			System.out.println("1: Buy");
+	        			System.out.println("2: Nevermind");
+	         			
+	         			theGUI.commandField.addActionListener(new AbstractAction() {
+	         		      		
+	         		         	@Override
+	         		         	public void actionPerformed(ActionEvent e) {    
+	         		         		
+	         		         		if(e.getActionCommand().equals("1") && copper >= 50) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			bronzeShield ++;
+	         		         			copper -= 50;
+	         		         			System.out.println("You have bought a bronze shield."
+	         		         					+ "\n");
+	         		         			smallShop();
+	         		         		}
+
+	         		         		else if(e.getActionCommand().equals("1") && copper < 50) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			System.out.println("You do not have enough for this item."
+	         		         					+ "\n");
+	         		         			smallShop();
+	         		         		}
+	         		         		
+	         		         		else if(e.getActionCommand().equals("2")) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			System.out.println("You continue looking."
+	         		    						+ "\n");
+	         		         			smallShop();
+	         		         		}        		         		
+	         		         	}
+	         		         	
+	         			});
+
+	         		}
+	         	
+	         		else if(e.getActionCommand().equals("5")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         				
+	         			System.out.println("Buy lantern for 30 copper Carlons?"
+	        					+ "\n");
+	        			System.out.println("1: Buy");
+	        			System.out.println("2: Nevermind");
+	         			
+	         			theGUI.commandField.addActionListener(new AbstractAction() {
+	         		      		
+	         		         	@Override
+	         		         	public void actionPerformed(ActionEvent e) {    
+	         		         		
+	         		         		if(e.getActionCommand().equals("1") && copper >= 30) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			lantern ++;
+	         		         			copper -= 30;
+	         		         			System.out.println("You have bought a lantern."
+	         		         					+ "\n");
+	         		         			smallShop();
+	         		         		}
+
+	         		         		else if(e.getActionCommand().equals("1") && copper < 30) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			System.out.println("You do not have enough for this item."
+	         		         					+ "\n");
+	         		         			smallShop();
+	         		         		}
+	         		         		
+	         		         		else if(e.getActionCommand().equals("2")) {
+	         		         			theGUI.commandField.removeActionListener(this);
+	         		         			
+	         		         			System.out.println("You continue looking."
+	         		    						+ "\n");
+	         		         			smallShop();
+	         		         		}        		         		
+	         		         	}
+	         		         	
+	         			});
+
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("6")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         				
+	         			System.out.println("The Shopkeeper looks at you intrigued, What have you go?"
+	        					+ "\nJust keep in mind, I don't buy what I can't sell myself."
+	        					+ "\n");
+	         			smallShop();																			// Need to finish   			
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("7")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         				
+	         			System.out.println("You are satisfied with your visit and leave the shop."
+	        					+ "\n");
+	         			townMain();         			
+	         		}         			         		
+	         	}
+	         	
+		 });	
+	}
+	
+	public void townSquare() {
+		
+		System.out.println("What would you like to do?"
+				+ "\n");
+		System.out.println("1: Toss a coin in the fountain");
+		System.out.println("2: Interact with a guard");
+		System.out.println("3: Interact with a farmer");
+		System.out.println("4: Leave the town");
+		System.out.println("5: Back to shops");
+		System.out.println("6: Inventory"
+				+ "\n");
+		
+		theGUI.commandField.addActionListener(new AbstractAction() {
+      		
+         	@Override
+         	public void actionPerformed(ActionEvent e) {
+         		
+         		if(e.getActionCommand().equals("1") && copper > 0) {
+         			theGUI.commandField.removeActionListener(this);
+         			copper --;
+					System.out.println("You toss a coin into the fountain, hoping for some luck!"
+							+ "\n");
+
+					int luck = rand.nextInt(100);
+
+					if(luck >= 50) {
+
+						health ++;
+						if(health > maxHealth) {
+							health = maxHealth;
+						}
+						theGUI.playerInfo.setText("HP " + health + "/" + maxHealth + "\nMana " + mana + "\nAD   "
+								+ attackDmg + "\nDEF " + defense + "\nLvl    " + level + "\nExp  " + experience);
+
+						System.out.println("Seeing your copper coin sink to the bottom, you feel slightly rejuvinated."
+								+ "\n"
+								+ "\nYou now have " + health + " HP remaining."
+								+ "\n");
+					}
+
+					else if(luck < 50) {
+
+						health --;
+						theGUI.playerInfo.setText("HP " + health + "/" + maxHealth + "\nMana " + mana + "\nAD   "
+								+ attackDmg + "\nDEF " + defense + "\nLvl    " + level + "\nExp  " + experience);
+						System.out.println("Seeing your copper coin sink to the bottom, you feel slightly drained."
+								+ "\n"
+								+ "\nYou now have " + health + " HP remaining."
+								+ "\n");
+					}
+					
+					if(health > 0) {
+					townSquare();
+					}
+					else if(health == 0) {
+						endGame();
+					}
+         		}
+         		
+         		else if(e.getActionCommand().equals("1") && copper == 0) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("You do not have a coin to toss into the fountain."
+							+ "\n");
+         			townSquare();
+         		}
+         		
+         		else if(e.getActionCommand().equals("2")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("The guard peers at you approaching through sleepy eyes."
+							+ "\nHe then yawns and closes then, ignoring you."
+							+ "\n");
+					// Perhaps enhance interaction later
+         			townSquare();
+         		}
+         		
+         		else if(e.getActionCommand().equals("3")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("You walk up to a farmer, seeing what he has to offer."
+							+ "\nHe has a small variety of wares, most useless to a man with no farm."
+							+ "\n");
+         			farmer();
+         		}
+         		
+         		else if(e.getActionCommand().equals("4")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("Ahead you see the city's gate leading south."
+							+ "\nBeyond it is a lush, green forest which is rumored to be dangerous."
+							+ "\n"
+							+ "Looking ahead with hope and determination, you decide to leave town."
+							+ "\n");
+					area = 2;
+					System.out.println("As you enter the forest, daylight dims through thickening treetops."
+							+ "\nThe path through the forest is old, but wide enough to walk through."
+							+ "\n");
+					forest();
+         		}
+         		
+         		else if(e.getActionCommand().equals("5")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("You take another look around and decide to return to the shops."
+							+ "\n");
+         			townMain();
+         		}
+         		
+         		else if(e.getActionCommand().equals("6")) {
+         			theGUI.commandField.removeActionListener(this);
+         			area = 8;
+					lastArea = 1;
+					System.out.println("You open your travel pack to see what is inside."
+							+ "\n");
+         			inventory();
+         		}
+         		
+         	}
+		});
+		
+	}
+	
+	public void farmer() {
+		
+		System.out.println("Which item would you like? He eagerly says"
+				+ "\n");
+		System.out.println("1: Apple\t9 copper");
+		System.out.println("2: Bread\t14 copper");
+		System.out.println("3: Pumpkin\t20 copper");
+		System.out.println("4: Scythe\t45 copper");
+		System.out.println("5: Leave");
+		
+		theGUI.commandField.addActionListener(new AbstractAction() {
+      		
+         	@Override
+         	public void actionPerformed(ActionEvent e) {         			         	
+         			
+         		if(e.getActionCommand().equals("1")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("Buy an apple for 9 copper Carlons?"
+        					+ "\n");
+        			System.out.println("1: Buy");
+        			System.out.println("2: Nevermind");
+        			
+        			theGUI.commandField.addActionListener(new AbstractAction() {
+        		      		
+        		         	@Override
+        		         	public void actionPerformed(ActionEvent e) {    
+        		         		
+        		         		if(e.getActionCommand().equals("1") && copper >= 9) {
+        		         			theGUI.commandField.removeActionListener(this);
+        		         			
+        		         			apple ++;
+        		         			copper -= 9;
+        		         			System.out.println("You have bought an apple."
+        		         					+ "\n");
+        		         			farmer();
+        		         		}
+
+        		         		else if(e.getActionCommand().equals("1") && copper < 9) {
+        		         			theGUI.commandField.removeActionListener(this);
+        		         			
+        		         			System.out.println("You do not have enough for this item."
+        		         					+ "\n");
+        		         			farmer();
+        		         		}
+        		         		
+        		         		else if(e.getActionCommand().equals("2")) {
+        		         			theGUI.commandField.removeActionListener(this);
+        		         			
+        		         			System.out.println("You continue looking."
+        		    						+ "\n");
+        		         			farmer();
+        		         		}      		         		
+        		         	}
+        			});
+         		}
+         		
+         		else if(e.getActionCommand().equals("2")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("Buy bread for 14 copper Carlons?"
+        					+ "\n");
+        			System.out.println("1: Buy");
+        			System.out.println("2: Nevermind");
+        			
+        			theGUI.commandField.addActionListener(new AbstractAction() {
+        		      		
+        		         	@Override
+        		         	public void actionPerformed(ActionEvent e) {    
+        		         		
+        		         		if(e.getActionCommand().equals("1") && copper >= 14) {
+        		         			theGUI.commandField.removeActionListener(this);
+        		         			
+        		         			bread ++;
+        		    				copper -= 14;
+        		    				System.out.println("You have bought a loaf of bread."
+        		    						+ "\n");
+        		         			farmer();
+        		         		}
+
+        		         		else if(e.getActionCommand().equals("1") && copper < 14) {
+        		         			theGUI.commandField.removeActionListener(this);
+        		         			
+        		         			System.out.println("You do not have enough for this item."
+        		         					+ "\n");
+        		         			farmer();
+        		         		}
+        		         		
+        		         		else if(e.getActionCommand().equals("2")) {
+        		         			theGUI.commandField.removeActionListener(this);
+        		         			
+        		         			System.out.println("You continue looking."
+        		    						+ "\n");
+        		         			farmer();
+        		         		}        		         		
+        		         	}
+        		         	
+        			});
+
+         		}
+         		
+         		else if(e.getActionCommand().equals("3")) {
+         			theGUI.commandField.removeActionListener(this);
+         				
+         			System.out.println("Buy pumpkin for 20 copper Carlons?"
+        					+ "\n");
+        			System.out.println("1: Buy");
+        			System.out.println("2: Nevermind");
+         			
+         			theGUI.commandField.addActionListener(new AbstractAction() {
+         		      		
+         		         	@Override
+         		         	public void actionPerformed(ActionEvent e) {    
+         		         		
+         		         		if(e.getActionCommand().equals("1") && copper >= 20) {
+         		         			theGUI.commandField.removeActionListener(this);
+         		         			
+         		         			pumpkin ++;
+         		         			copper -= 20;
+         		         			System.out.println("You have bought a pumpkin."
+         		         					+ "\n");
+         		         			farmer();
+         		         		}
+
+         		         		else if(e.getActionCommand().equals("1") && copper < 20) {
+         		         			theGUI.commandField.removeActionListener(this);
+         		         			
+         		         			System.out.println("You do not have enough for this item."
+         		         					+ "\n");
+         		         			farmer();
+         		         		}
+         		         		
+         		         		else if(e.getActionCommand().equals("2")) {
+         		         			theGUI.commandField.removeActionListener(this);
+         		         			
+         		         			System.out.println("You continue looking."
+         		    						+ "\n");
+         		         			farmer();
+         		         		}        		         		
+         		         	}
+         		         	
+         			});
+
+         		}
+         		
+         		else if(e.getActionCommand().equals("4")) {
+         			theGUI.commandField.removeActionListener(this);
+         				
+         			System.out.println("Buy scythe for 45 copper Carlons?"
+        					+ "\n");
+        			System.out.println("1: Buy");
+        			System.out.println("2: Nevermind");
+         			
+         			theGUI.commandField.addActionListener(new AbstractAction() {
+         		      		
+         		         	@Override
+         		         	public void actionPerformed(ActionEvent e) {    
+         		         		
+         		         		if(e.getActionCommand().equals("1") && copper >= 45) {
+         		         			theGUI.commandField.removeActionListener(this);
+         		         			
+         		         			scythe ++;
+         		         			copper -= 45;
+         		         			System.out.println("You have bought a scythe."
+         		         					+ "\n");
+         		         			smallShop();
+         		         		}
+
+         		         		else if(e.getActionCommand().equals("1") && copper < 45) {
+         		         			theGUI.commandField.removeActionListener(this);
+         		         			
+         		         			System.out.println("You do not have enough for this item."
+         		         					+ "\n");
+         		         			smallShop();
+         		         		}
+         		         		
+         		         		else if(e.getActionCommand().equals("2")) {
+         		         			theGUI.commandField.removeActionListener(this);
+         		         			
+         		         			System.out.println("You continue looking."
+         		    						+ "\n");
+         		         			smallShop();
+         		         		}        		         		
+         		         	}
+         		         	
+         			});
+
+         		}
+         	         		         		
+         		else if(e.getActionCommand().equals("5")) {
+         			theGUI.commandField.removeActionListener(this);
+         				
+         			System.out.println("You leave the farmer and his goods."
+							+ "\n");
+         			townSquare();
+         		}         			         		
+         	}
+         	
+		});		
+	}
+	
+	public void forest() {
+		area = 2;		
+		theGUI.locationLabel.setText(" Your location: Forest");
+		
+		System.out.println("What would you like to do?"
+				+ "\n");
+		System.out.println("1: Continue to next town");
+		System.out.println("2: Look for a monster to fight");
+		System.out.println("3: Return to previous town");
+		System.out.println("4: Inventory");
+		if(forestState > 0) {
+			System.out.println("5: Go through caves");
+		}
+		System.out.println("");
+		
+		 theGUI.commandField.addActionListener(new AbstractAction() {
+      		
+	         	@Override
+	         	public void actionPerformed(ActionEvent e) {
+	         		
+	         		if(e.getActionCommand().equals("1") && forestState == 0) {
+	         			theGUI.commandField.removeActionListener(this);
+	         			forestState = 1;
+	    				System.out.println("As you attempt to continue up the path toward the next town,"
+	    						+ "\nA giant boulder is blocking your path and you are forced to turn around."
+	    						+ "\nThough as you do, you see the mouth of a cave through the trees."
+	    						+ "\nThis could be a way around the impassable boulder."
+	    						+ "\n");
+	    				forest();
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("1") && forestState == 2) {
+	         			theGUI.commandField.removeActionListener(this);
+	         			cityState = 0;
+	    				area = 4;
+	    				System.out.println("You go up the path toward the city and find the boulder pushed away"
+	    						+ "\nThe trip takes some time, but it is much faster and safer."
+	    						+ "\nYou exit the forest and continue onward."
+	    						+ "\n");
+	    				//darkForest();
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("2")) {
+	         			theGUI.commandField.removeActionListener(this);   
+	         			
+	         			// Sets area's mob info
+	         			String[] mobs = {"Slime", "Giant Animated Mushroom", "Feral Rabbit", "Giant Spider", "Bandit"};
+	         			mobHealth = 10;
+	         			mobAD = 10;
+	         			mobEXP = 10;
+	         			mobMoney = 5;	 
+	         			
+	         			enemy = mobs[rand.nextInt(mobs.length)];
+	         			System.out.println("\t# A " + enemy + " has appeared! #"
+	         					+ "\n");	
+	         			mobFight();
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("3")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         			area = 1;
+	    				System.out.println("You leave the forest, deciding to go back to town"
+	    						+ "\n");
+	    				townMain();
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("4")) {
+	         			theGUI.commandField.removeActionListener(this);
+	         			area = 8;
+	    				lastArea = 2;
+	    				inventory();
+	         		}
+	         		
+	         		else if(e.getActionCommand().equals("5") && forestState > 0) {
+	         			theGUI.commandField.removeActionListener(this);
+	         			area = 3;
+	    				System.out.println("You venture into the caves, searching for a way around."
+	    						+ "\n");
+	    				//caves();
+	         		}
+	         	}
+		 });
+		
+	}
+	
+	public void mobFight() {
+				
+		System.out.println("\tYour HP: " + health + "/" + maxHealth + "\tMana: " + mana);
+		System.out.println("\t"  + enemy + "'s HP: " + mobHealth);
+		System.out.println("\n\tWhat would you like to do?");
+		System.out.println("\t1. Attack");
+		System.out.println("\t2. Cast Spell");
+		System.out.println("\t3. Use Item");
+		System.out.println("\t4. Run"
+				+ "\n");
+		
+		theGUI.commandField.addActionListener(new AbstractAction() {
+      		
+         	@Override
+         	public void actionPerformed(ActionEvent e) {
+         		
+         		if(e.getActionCommand().equals("1")) {
+         			theGUI.commandField.removeActionListener(this);
+         			int damageDealt = rand.nextInt(attackDmg);
+					int damageTaken = rand.nextInt(mobAD) - defense;
+
+					mobHealth -= damageDealt;
+
+					if(damageTaken > 0) {
+
+						health -= damageTaken;
+					}
+
+					else if(damageTaken <= 0) {
+
+						damageTaken = 1;
+						health -= damageTaken;
+					}
+
+					System.out.println("\t> You strike the " + enemy + " for " + damageDealt + " damage");
+					System.out.println("\t> You recieve " + damageTaken + " points of damage!");
+					System.out.println("");
+					pInfoUpdate();
+
+					if(health < 1) {
+						
+						health = 0;
+						pInfoUpdate();
+						System.out.println("\t> You collapse on the floor, taking your last breath."
+								+ "\n");
+						endGame();
+					}
+					
+					else if(mobHealth > 1) {
+						mobFight();
+					}
+					
+					else {
+						mobRewards();
+					}
+
+				}
+
+				else if(e.getActionCommand().equals("1") && mobHealth < 2) {
+					theGUI.commandField.removeActionListener(this);
+					int execute = attackDmg;
+					mobHealth -= execute;
+
+					System.out.println("\t> You execute the " + enemy + "!"
+							+ "\n");
+					mobRewards();
+				}         			         		
+         		
+         		else if(e.getActionCommand().equals("2")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("\t1. Cast Fireball\t\t10 Mana");
+					System.out.println("\t2. Cast Magic Missile\t15 Mana");
+					if(spellState > 0) {
+						System.out.println("\t3. Cast Absorb\t\t25 Mana");
+					}
+					System.out.println("");
+					
+					theGUI.commandField.addActionListener(new AbstractAction() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							if(e.getActionCommand().equals("1") && mobHealth >= 2 && mana >= 10) {
+								theGUI.commandField.removeActionListener(this);
+								mobHealth -= fireBallDamage;
+								mana -= fireBallMana;
+
+								System.out.println("\tYou shoot a fireball at the " + enemy + " dealing " + fireBallDamage + " damage"
+										+ "\n");
+								
+								pInfoUpdate();
+								
+								if(mobHealth > 1) {
+									mobFight();
+								}
+								
+								else {
+									mobRewards();
+								}
+							}
+
+							else if(e.getActionCommand().equals("1") && mobHealth < 2) {
+								theGUI.commandField.removeActionListener(this);
+								int execute = attackDmg;
+								mobHealth -= execute;
+
+								System.out.println("\t> You execute the " + enemy + "!"
+										+ "\n");
+								mobRewards();
+							}
+
+							else if(e.getActionCommand().equals("1") && mana < 10) {
+								theGUI.commandField.removeActionListener(this);
+								
+								System.out.println("\tYou do not have enough mana for this spell!"
+										+ "\n");
+								mobFight();
+							}
+
+							else if(e.getActionCommand().equals("2") && mobHealth >= 2 && mana >= 15) {
+								theGUI.commandField.removeActionListener(this);
+								mobHealth -= magicMissileDamage;
+								mana -= magicMissileMana;
+
+								System.out.println("\tYou shoot a magic missile at the " + enemy + " dealing " + magicMissileDamage + " damage"
+										+ "\n");
+								
+								pInfoUpdate();
+								
+								if(mobHealth > 1) {
+									mobFight();
+								}
+								
+								else {
+									mobRewards();
+								}
+							}
+
+							else if(e.getActionCommand().equals("2") && mobHealth < 2) {
+								theGUI.commandField.removeActionListener(this);
+								int execute = attackDmg;
+								mobHealth -= execute;
+
+								System.out.println("\tYou execute the " + enemy + "!");
+								System.out.println("");
+								mobRewards();
+							}
+
+							else if(e.getActionCommand().equals("2") && mana < 15) {
+								theGUI.commandField.removeActionListener(this);
+								
+								System.out.println("\tYou do not have enough mana for this spell!"
+										+ "\n");
+								mobFight();
+							}
+
+							else if(e.getActionCommand().equals("3") && mobHealth >= 2 && mana >= 25 && spellState > 0) {
+								theGUI.commandField.removeActionListener(this);
+								mobHealth -= absorbDamage;
+								mana -= absorbMana;
+								health += 10;
+
+								if(health > maxHealth) {
+									health = maxHealth;
+								}
+
+								System.out.println("\tYou cast absorb at the " + enemy + " dealing " + absorbDamage + " damage");
+								System.out.println("\tYou absorb " + absorbDamage + " health from the " + enemy);
+								System.out.println("");
+								
+								pInfoUpdate();
+								
+								if(mobHealth > 1) {
+									mobFight();
+								}
+								
+								else {
+									mobRewards();
+								}
+							}
+
+							else if(e.getActionCommand().equals("3") && mobHealth < 2) {
+								theGUI.commandField.removeActionListener(this);
+								int execute = attackDmg;
+								mobHealth -= execute;
+
+								System.out.println("\tYou execute the " + enemy + "!"
+										+ "\n");
+								mobRewards();
+							}
+
+							else if(e.getActionCommand().equals("3") && mana < 25 || spellState == 0) {
+								theGUI.commandField.removeActionListener(this);
+								
+								System.out.println("\tYou do not have enough mana for this spell!"
+										+ "\n");
+								mobFight();
+							}							
+						}
+												
+					});					
+         		}
+         		
+         		else if(e.getActionCommand().equals("3")) {
+         			theGUI.commandField.removeActionListener(this);
+         			
+         			System.out.println("\tSelect an item to use");
+					System.out.println("\t1. Health Potion");
+					System.out.println("\t2. Super Health Potion");
+					System.out.println("\t3. Mana Potion"
+							+ "\n");
+					
+					theGUI.commandField.addActionListener(new AbstractAction() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							
+							if(e.getActionCommand().equals("1")) {
+								theGUI.commandField.removeActionListener(this);
+								if(healthPots > 0) {
+
+									health += healthPotHeal;
+									healthPots --;
+
+									if(health > maxHealth) {
+										health = maxHealth;
+									}
+
+									System.out.println("\t> You drink a health potion, healing for " + healthPotHeal + " HP."
+													+ "\n\t> You now have " + health + " HP."
+													+ "\n\t> You have " + healthPots + " health potions left.\n");
+									pInfoUpdate();
+									mobFight();
+								}
+
+								else {
+
+									System.out.println("\t> You have no health potions left! Defeat enemies for a chance to get one!"
+											+ "\n");
+									mobFight();
+								}
+							}
+
+							else if(e.getActionCommand().equals("2")) {
+								theGUI.commandField.removeActionListener(this);
+								if(superHealthPots > 0) {
+
+									health += superHealthPotHeal;
+									superHealthPots --;
+
+									if(health > maxHealth) {
+										health = maxHealth;
+									}
+
+									System.out.println("\t> You drink a super health potion, healing for " + superHealthPotHeal + " HP."
+													+ "\n\t> You now have " + health + " HP."
+													+ "\n\t> You have " + superHealthPots + " super health potions left.\n");
+									pInfoUpdate();
+									mobFight();
+								}
+
+								else {
+
+									System.out.println("\t> You have no super health potions left! Defeat a boss for the chance to get one!"
+											+ "\n");
+									mobFight();
+								}
+							}
+
+							else if(e.getActionCommand().equals("3")) {
+								theGUI.commandField.removeActionListener(this);
+								if(manaPots > 0) {
+
+									mana += manaPotRestore;
+									manaPots --;
+									System.out.println("\t> You drink a mana potion, restoring " + manaPotRestore + " Mana."
+											+ "\n\t> You now have " + mana + " Mana."
+											+ "\n\t> You have " + manaPots + " mana potions left.\n");
+									pInfoUpdate();
+									mobFight();
+								}
+
+								else {
+
+									System.out.println("\t> You have no mana potions left! Defeat any monster for the chance to get one!"
+											+ "\n");
+									mobFight();
+								}
+							}
+							
+						}						
+						
+					});				
+         		}
+         		
+         		else if(e.getActionCommand().equals("4")) {
+         			theGUI.commandField.removeActionListener(this);
+         			System.out.println("\tYou run away from the " + enemy + "!"
+							+ "\n");
+         			switch(area) {
+    				case 1:
+    					townMain();
+    				case 2:
+    					forest();
+    				}
+         		}
+         	}
+		});
+	}
+	
+	public void mobRewards() {
+		
+		switch(area) {
+		case 1:
+			gold += mobMoney;
+		case 2:
+			copper += mobMoney;
+		}		
+		experience += mobEXP;		
+		enemiesDefeated ++;
+
+		System.out.println("------------------------------------------------------");
+		System.out.println(" # " + enemy + " was defeated! #");
+		System.out.println(" # You have gained " + mobEXP + " XP #");
+		
+		switch(area) {
+		case 1:
+			System.out.println(" # You have gained " + mobMoney + " gold pieces #");
+		case 2:
+			System.out.println(" # You have gained " + mobMoney + " copper pieces #");
+		}
+		
+		System.out.println(" # You have " + health + " HP left #"
+				+ "\n");
+
+		leveling();
+
+		// Coin conversions
+		if(copper >= 100) {
+
+			silver ++;
+			copper -= 100;
+		}
+
+		if(silver >= 100) {
+
+			gold ++;
+			silver -= 100;
+		}
+
+		// Item drops ------------------------------ needs switch statement when ready for more area drops
+		if(rand.nextInt(100) < healthPotDrop) {
+
+			healthPots++;
+			System.out.println(" # The " + enemy + " dropped a health potion! # ");
+			System.out.println(" # You now have " + healthPots + " health potion(s). # ");
+		}
+
+		if(rand.nextInt(100) < bSwordDrop) {
+
+			bronzeSword ++;
+			System.out.println(" * The " + enemy + " dropped a bronze sword! * ");
+		}
+
+		if(rand.nextInt(100) < bShieldDrop) {
+
+			bronzeShield ++;
+			System.out.println(" * The " + enemy + " dropped a bronze shield! * ");
+		}
+
+		switch(area) {
+		case 1:
+			townMain();
+		case 2:
+			forest();
+		}
+	}
+	
+	public void endGame() {
+		
+		System.out.println("");
+		System.out.println("##########################");
+		System.out.println("      # Thank you for playing! #");
+		System.out.println("##########################");
+		System.out.println("");
+		System.out.println("Created by: Dane Stark");
 	}
 
 	//Expect the GUI as an arg.
@@ -8414,6 +9568,10 @@ public class MainRPG implements Runnable{
 
 	}
 
+	public void pInfoUpdate() {
+		theGUI.playerInfo.setText("HP " + health + "/" + maxHealth + "\nMana " + mana + "\nAD   "
+				+ attackDmg + "\nDEF " + defense + "\nLvl    " + level + "\nExp  " + experience);
+	}
 
 	@Override
 	public void run() {
