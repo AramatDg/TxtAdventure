@@ -150,7 +150,7 @@ public class GUI implements Runnable {
 
         JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout());
-        panel2.add(new JLabel(" Player Info"), BorderLayout.NORTH);
+        panel2.add(new JLabel(" Player Status"), BorderLayout.NORTH);
         panel2.add(new JScrollPane(playerInfo), BorderLayout.CENTER);
         playerInfo.setEditable(false);
         playerInfo.setText("HP " + health + "/" + maxHealth + "\nMana " + mana + "\nAD   " + ad + "\nDEF " + def + "\nLvl    " + lvl + "\nExp  " + exp);
@@ -160,7 +160,7 @@ public class GUI implements Runnable {
 
         JPanel panel3 = new JPanel();
         panel3.setLayout(new BorderLayout());
-        panel3.add(new JLabel(" Currently Equipped"), BorderLayout.NORTH);
+        panel3.add(new JLabel(" Currently Equipped "), BorderLayout.NORTH);
         panel3.add(new JScrollPane(equipmentDisplay), BorderLayout.CENTER);
         equipmentDisplay.setEditable(false);
         equipmentDisplay.setText(sword + "\n" + shield);
@@ -170,10 +170,10 @@ public class GUI implements Runnable {
 
         JPanel panel4 = new JPanel();
         panel4.setLayout(new BorderLayout());
-        panel4.add(new JLabel(" Quests etc?"), BorderLayout.NORTH);
+        panel4.add(new JLabel(" Quests"), BorderLayout.NORTH);
         panel4.add(new JScrollPane(questDisplay), BorderLayout.CENTER);
         questDisplay.setEditable(false);
-        questDisplay.setText("Main Quest\nSide Quests");
+        questDisplay.setText("");
         panel4.setBorder(new LineBorder(Color.BLACK));
         panel4.setBackground(new Color(0xCCFFCC));
 
