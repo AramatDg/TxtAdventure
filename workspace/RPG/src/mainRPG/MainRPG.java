@@ -38,7 +38,7 @@ public class MainRPG implements Runnable{
 	static int maxHealth = 25;
 	static int health = 25;
 	static int mana = 20;
-	static int attackDmg = 0;
+	static int attackDmg = 10;
 	static int defense = 0;
 	static int healthPotHeal = 15;
 	static int superHealthPotHeal = 30;
