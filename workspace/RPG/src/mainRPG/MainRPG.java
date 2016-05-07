@@ -38,7 +38,7 @@ public class MainRPG implements Runnable{
 	static int maxHealth = 25;
 	static int health = 25;
 	static int mana = 20;
-	static int attackDmg = 10;
+	static int attackDmg = 0;
 	static int defense = 0;
 	static int healthPotHeal = 15;
 	static int superHealthPotHeal = 30;
@@ -357,6 +357,7 @@ public class MainRPG implements Runnable{
 										+ "\n"
 										+ "\nYou awake feeling refreshed and ready for an adventure!"
 										+ "\n");
+								pInfoUpdate();
 								barkeeper();
 							}
 							
@@ -897,6 +898,7 @@ public class MainRPG implements Runnable{
 					copper += 25;
 					System.out.println("You sell the bronze sword for 25 copper."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("1") && bronzeSword == 0) {
@@ -904,6 +906,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You do not have a bronze sword."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("1") && currentSwordEquip == "Bronze sword") {
@@ -911,6 +914,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You must first remove your sword to sell."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("2") && bronzeShield > 0 && currentShieldEquip != "Bronze Shield") {
@@ -919,6 +923,7 @@ public class MainRPG implements Runnable{
 					copper += 25;
 					System.out.println("You sell the bronze shield for 25 copper."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("2") && bronzeShield == 0) {
@@ -926,6 +931,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You do not have a bronze shield."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("2") && currentShieldEquip == "Bronze Shield") {
@@ -933,6 +939,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You must first remove your shield to sell."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("3") && ironSword > 0 && currentSwordEquip != "Iron Sword") {
@@ -941,6 +948,7 @@ public class MainRPG implements Runnable{
 					silver ++;
 					System.out.println("You sell the iron sword for 1 silver."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("3") && ironSword == 0) {
@@ -948,6 +956,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You do not have an iron sword."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("3") && currentSwordEquip == "Iron sword") {
@@ -955,6 +964,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You must first remove your sword to sell."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("4") && ironShield > 0 && currentShieldEquip != "Iron Shield") {
@@ -963,6 +973,7 @@ public class MainRPG implements Runnable{
 					silver ++;
 					System.out.println("You sell the iron shield for 1 silver."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("4") && ironShield == 0) {
@@ -970,6 +981,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You do not have an iron shield."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("4") && currentShieldEquip == "Iron Shield") {
@@ -977,6 +989,7 @@ public class MainRPG implements Runnable{
 					
 					System.out.println("You must first remove your shield to sell."
 							+ "\n");
+					smallShopSell();
 				}
 
 				else if(e.getActionCommand().equals("5")) {
@@ -1530,6 +1543,7 @@ public class MainRPG implements Runnable{
          			area = 5;
     				System.out.println("You walk back toward the city, leaving the dark forest behind."
     						+ "\n");
+    				city();
          		}
          		
          		else if(e.getActionCommand().equals("4")) {     			
@@ -3310,7 +3324,7 @@ public class MainRPG implements Runnable{
          		         	@Override
          		         	public void actionPerformed(ActionEvent e) {    
          		         		
-         		         		if(input.equals("1") && warriorToken >= 1) {
+         		         		if(e.getActionCommand().equals("1") && warriorToken >= 1) {
          		         			theGUI.commandField.removeActionListener(this);
 									guildShield ++;
 									warriorToken --;
@@ -3319,7 +3333,7 @@ public class MainRPG implements Runnable{
 									guildShop();
 								}
 
-								else if(input.equals("1") && warriorToken < 1) {
+								else if(e.getActionCommand().equals("1") && warriorToken < 1) {
 									theGUI.commandField.removeActionListener(this);
 									
 									System.out.println("You do not have enough for this item."
@@ -3327,7 +3341,7 @@ public class MainRPG implements Runnable{
 									guildShop();
 								}
 
-								else if(input.equals("2")) {
+								else if(e.getActionCommand().equals("2")) {
 									theGUI.commandField.removeActionListener(this);
 									
 									System.out.println("You continue looking."
@@ -4011,7 +4025,7 @@ public class MainRPG implements Runnable{
          			mobFight();
          		}
          		
-         		else if(input.equals("2") && gameBeat == 0) {
+         		else if(e.getActionCommand().equals("2") && gameBeat == 0) {
          			theGUI.commandField.removeActionListener(this);
          			
 					System.out.println("You cannot approach the Dragon's Nest with it still alive."
@@ -4019,7 +4033,7 @@ public class MainRPG implements Runnable{
 					dragonNest();
 				}
 
-				else if(input.equals("2") && gameBeat == 1) {
+				else if(e.getActionCommand().equals("2") && gameBeat == 1) {
 					theGUI.commandField.removeActionListener(this);
 					gold += 5;
 					silver += 50;
@@ -4515,6 +4529,7 @@ public class MainRPG implements Runnable{
 			break;
 		case 11:
 			silver += mobMoney;
+			nestPath ++;
 			break;
 		case 12:
 			silver += mobMoney;
@@ -5015,7 +5030,12 @@ public class MainRPG implements Runnable{
 			System.out.println(applePie + " Apple Pie(s)");
 		}
 		if(bread > 0) {
-			System.out.println(bread + " Loaves of Bread");
+			if(bread == 1) {
+			System.out.println(bread + " Loaf of Bread");
+			}
+			else if(bread > 1) {
+				System.out.println(bread + " Loaves of Bread");
+			}
 		}
 		if(beer > 0) {
 			System.out.println(beer + " Mug(s) of Beer");
